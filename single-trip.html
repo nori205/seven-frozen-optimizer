@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>セブン冷食 最適購入計算機</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #e63946;
+      --red-dk: #c1121f;
+      --green:  #2a9d8f;
+      --blue:   #1d6fa4;
+      --bg:     #f1f3f6;
+      --card:   #ffffff;
+      --text:   #1a1a2e;
+      --muted:  #6c757d;
+      --border: #dee2e6;
+      --yellow: #ffd166;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 52px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ===== HEADER ===== */
+    .app-header {
+      background: linear-gradient(135deg, var(--red-dk), var(--red));
+      color: #fff;
+      padding: 20px 16px 16px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    .app-header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.3px; line-height: 1.3; }
+    .app-header p  { font-size: 11px; opacity: 0.8; margin-top: 4px; }
+
+    /* ===== CAMPAIGN BANNER ===== */
+    .banner {
+      margin: 14px 14px 0;
+      background: #fffbec;
+      border: 1.5px solid #ffd166;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .banner-title { font-size: 12px; font-weight: bold; color: #856404; margin-bottom: 7px; letter-spacing: 0.5px; }
+    .banner-item  { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; color: #5a4100; line-height: 1.5; }
+    .banner-item + .banner-item { margin-top: 5px; }
+    .badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ===== SECTION ===== */
+    .section       { margin: 14px; }
+    .section-title { font-size: 15px; font-weight: bold; color: var(--text); margin-bottom: 10px; }
+
+    /* ===== PRODUCT CARD ===== */
+    .product-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.09);
+    }
+    .pc-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .pc-header input[type="text"] {
+      flex: 1;
+      font-size: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 11px;
+      background: #fafbfc;
+      color: var(--text);
+      transition: border-color .15s;
+    }
+    .pc-header input[type="text"]:focus { outline: none; border-color: var(--red); background: #fff; }
+
+    .btn-del {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: #f0f0f0;
+      color: #888;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .15s, color .15s;
+    }
+    .btn-del:active { background: #fde8e8; color: var(--red); }
+
+    .pc-fields { display: flex; gap: 10px; }
+    .pc-field  { flex: 1; }
+    .pc-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+    .pc-field input[type="number"] {
+      width: 100%;
+      font-size: 18px;
+      font-weight: bold;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #fafbfc;
+      color: var(--text);
+      -moz-appearance: textfield;
+      transition: border-color .15s;
+    }
+    .pc-field input[type="number"]::-webkit-outer-spin-button,
+    .pc-field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .pc-field input[type="number"]:focus { outline: none; border-color: var(--red); background: #fff; }
+
+    /* ===== BUTTONS ===== */
+    .btn-add {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px;
+      background: var(--card);
+      color: var(--green);
+      border: 2px dashed var(--green);
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: background .15s;
+    }
+    .btn-add:active { background: #e8f8f5; }
+
+    .btn-calc {
+      width: 100%;
+      background: linear-gradient(135deg, var(--red-dk), var(--red));
+      color: #fff;
+      border: none;
+      border-radius: 13px;
+      padding: 17px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      box-shadow: 0 4px 14px rgba(198,18,31,0.35);
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-calc:active { opacity: .88; transform: scale(.985); }
+
+    /* ===== RESULT ===== */
+    .result-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.11);
+    }
+    .result-title {
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--red);
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #fde8e8;
+      letter-spacing: 0.5px;
+    }
+
+    /* combo table */
+    .combo-wrap {
+      background: #f7f8fa;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .c-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 13px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      gap: 8px;
+    }
+    .c-row:last-child { border-bottom: none; }
+    .c-row.c-total { background: #eef0f3; font-weight: bold; font-size: 14px; }
+    .c-name  { font-weight: bold; color: #333; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .c-right { text-align: right; line-height: 1.5; flex-shrink: 0; color: #555; }
+    .c-right strong { font-size: 15px; color: #333; }
+
+    /* summary rows */
+    .summ { margin-top: 2px; }
+    .s-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #f2f2f2;
+      font-size: 15px;
+      gap: 8px;
+    }
+    .s-row:last-child { border-bottom: none; }
+    .s-row .lbl { color: var(--muted); flex: 1; }
+    .s-row .val { font-weight: bold; flex-shrink: 0; }
+
+    .s-row.s-disc  .val { color: var(--green); }
+    .s-row.s-after .lbl { font-size: 16px; font-weight: bold; color: var(--text); }
+    .s-row.s-after .val { font-size: 24px; font-weight: 900; color: var(--red); }
+    .s-row.s-after { padding: 13px 0; }
+    .s-row.s-lot   .lbl { font-weight: bold; color: var(--blue); }
+    .s-row.s-lot   .val { color: var(--blue); font-size: 20px; }
+    .s-row.s-over  .lbl { font-size: 13px; }
+    .s-row.s-over  .val { font-size: 13px; color: var(--muted); }
+
+    /* no result / error / spinner */
+    .no-result { text-align: center; padding: 26px 10px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .spinner   { text-align: center; padding: 30px; color: var(--muted); font-size: 14px; }
+    .spinner::after { content: ''; display: inline-block; width: 20px; height: 20px; border: 3px solid #ddd; border-top-color: var(--red); border-radius: 50%; animation: spin .7s linear infinite; margin-left: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .err {
+      background: #fdf2f2;
+      border: 1.5px solid #f5c6cb;
+      color: #842029;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>セブンイレブン 冷食<br>最適購入計算機</h1>
+  <p>キャンペーンを最大活用できる組み合わせを自動計算</p>
+</header>
+
+<div class="banner">
+  <div class="banner-title">▼ 適用キャンペーン</div>
+  <div class="banner-item">
+    <span class="badge">①</span>
+    <span>冷凍食品 <strong>3点ごとに200円引き</strong>（何セットでも適用。6点→400円引き、9点→600円引き）</span>
+  </div>
+  <div class="banner-item">
+    <span class="badge">②</span>
+    <span>1会計 <strong>1,000円以上</strong> でくじ1枚引ける（1,000円ごとに1枚。2,100円→2枚）</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">商品リスト</div>
+  <div id="product-list"></div>
+  <button class="btn-add" onclick="addProduct()">＋ 商品を追加</button>
+  <button class="btn-calc" onclick="onCalc()">最適な購入組み合わせを計算</button>
+</div>
+
+<div id="result" class="section"></div>
+
+<script>
+'use strict';
+
+// ── state ──────────────────────────────────────────────
+let products  = [];
+let nextId    = 0;
+const ALPHA   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+// ── helpers ────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+function esc(v) {
+  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function name(p, i) {
+  return p.name.trim() || ('商品' + (ALPHA[i] || (i + 1)));
+}
+
+// ── product CRUD ────────────────────────────────────────
+function addProduct() {
+  products.push({ id: nextId++, name: '', price: '', stock: '' });
+  render();
+}
+function delProduct(id) {
+  products = products.filter(p => p.id !== id);
+  render();
+}
+function set(id, field, v) {
+  const p = products.find(p => p.id === id);
+  if (p) p[field] = v;
+}
+
+function render() {
+  $('product-list').innerHTML = products.map((p, i) => `
+    <div class="product-card">
+      <div class="pc-header">
+        <input type="text" placeholder="${esc('商品' + (ALPHA[i] || (i+1)))}"
+               value="${esc(p.name)}"
+               oninput="set(${p.id},'name',this.value)">
+        <button class="btn-del" onclick="delProduct(${p.id})" aria-label="削除">✕</button>
+      </div>
+      <div class="pc-fields">
+        <div class="pc-field">
+          <label>価格（円）</label>
+          <input type="number" inputmode="numeric" min="1" placeholder="298"
+                 value="${esc(p.price)}"
+                 oninput="set(${p.id},'price',this.value)">
+        </div>
+        <div class="pc-field">
+          <label>在庫数（点）</label>
+          <input type="number" inputmode="numeric" min="1" placeholder="5"
+                 value="${esc(p.stock)}"
+                 oninput="set(${p.id},'stock',this.value)">
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── validation ──────────────────────────────────────────
+function validate() {
+  if (!products.length) return '商品を1つ以上追加してください。';
+  for (let i = 0; i < products.length; i++) {
+    const p = products[i], nm = name(p, i);
+    if (isNaN(parseInt(p.price)) || +p.price < 1)  return nm + ' の価格（1以上）を入力してください。';
+    if (isNaN(parseInt(p.stock)) || +p.stock < 1)  return nm + ' の在庫数（1以上）を入力してください。';
+  }
+  return null;
+}
+
+// ── solver ──────────────────────────────────────────────
+// キャンペーン仕様（元仕様通り）
+//   割引 = floor(総点数 / 3) × 200
+//   くじ = floor(割引後合計 / 1000)  ← 1,000円ごとに1枚
+//   はみ出し = 割引後合計 % 1000
+//
+// 最適化（辞書順最小）: [はみ出し, 割引後合計]
+//   → はみ出しを最小化し、同率なら割引後合計を最小化
+
+function solve(prods) {
+  const n      = prods.length;
+  const combo  = new Int32Array(n);
+  const maxAll = Math.min(prods.reduce((s, p) => s + p.stock, 0), 30);
+  let best     = null;
+
+  function rec(i, items, price) {
+    if (i === n) {
+      if (!items) return;
+      const disc  = Math.floor(items / 3) * 200;
+      const after = price - disc;
+      if (after < 1000) return;
+      const over  = after % 1000;
+      if (
+        best === null ||
+        over < best.over ||
+        (over === best.over && after < best.after)
+      ) {
+        best = { combo: Int32Array.from(combo), items, price, disc, after, over, lottery: Math.floor(after / 1000) };
+      }
+      return;
+    }
+    const { price: up, stock } = prods[i];
+    const lim = Math.min(stock, maxAll - items);
+    for (let q = 0; q <= lim; q++) {
+      combo[i] = q;
+      rec(i + 1, items + q, price + q * up);
+    }
+    combo[i] = 0;
+  }
+
+  rec(0, 0, 0);
+  return best;
+}
+
+// ── calculate ────────────────────────────────────────────
+function onCalc() {
+  const res = $('result');
+  const err = validate();
+  if (err) { res.innerHTML = `<div class="err">${esc(err)}</div>`; return; }
+
+  const prods = products.map((p, i) => ({
+    name:  name(p, i),
+    price: +p.price,
+    stock: Math.min(+p.stock, 30)
+  }));
+
+  // 組み合わせ数推定
+  const est = prods.reduce((a, p) => a * (p.stock + 1), 1);
+  let warn  = '';
+  if (est > 8e6) {
+    prods.forEach(p => { p.stock = Math.min(p.stock, 6); });
+    warn = '在庫数が多いため、各商品の探索上限を6点に制限して計算しました。';
+  }
+
+  res.innerHTML = '<div class="spinner">計算中</div>';
+
+  setTimeout(() => {
+    const r = solve(prods);
+    showResult(r, prods, warn);
+  }, 30);
+}
+
+// ── render result ─────────────────────────────────────────
+function showResult(r, prods, warn) {
+  const res = $('result');
+
+  if (!r) {
+    res.innerHTML = `
+      <div class="result-card">
+        <div class="no-result">
+          条件を満たす組み合わせが見つかりませんでした。<br>
+          在庫数を増やすか、価格をご確認ください。
+        </div>
+      </div>`;
+    return;
+  }
+
+  const bought = Array.from(r.combo)
+    .map((qty, i) => ({ qty, p: prods[i] }))
+    .filter(x => x.qty > 0);
+
+  const sets = Math.floor(r.items / 3);
+
+  const rows = bought.map(x => `
+    <div class="c-row">
+      <span class="c-name">${esc(x.p.name)}</span>
+      <span class="c-right">
+        <strong>${x.qty}点</strong><br>
+        <small>${x.p.price.toLocaleString()}円 × ${x.qty} = ${(x.p.price * x.qty).toLocaleString()}円</small>
+      </span>
+    </div>`).join('');
+
+  res.innerHTML = `
+    <div class="result-card">
+      ${warn ? `<div class="err" style="margin-bottom:12px;font-size:13px;">${esc(warn)}</div>` : ''}
+      <div class="result-title">最適な購入組み合わせ</div>
+
+      <div class="combo-wrap">
+        ${rows}
+        <div class="c-row c-total">
+          <span>合計</span>
+          <span>${r.items}点</span>
+        </div>
+      </div>
+
+      <div class="summ">
+        <div class="s-row">
+          <span class="lbl">定価合計</span>
+          <span class="val">${r.price.toLocaleString()}円</span>
+        </div>
+        <div class="s-row s-disc">
+          <span class="lbl">割引額（${sets}セット × 200円）</span>
+          <span class="val">－${r.disc.toLocaleString()}円</span>
+        </div>
+        <div class="s-row s-after">
+          <span class="lbl">割引後合計</span>
+          <span class="val">${r.after.toLocaleString()}円</span>
+        </div>
+        <div class="s-row s-lot">
+          <span class="lbl">🎟 くじ枚数</span>
+          <span class="val">${r.lottery}枚</span>
+        </div>
+        <div class="s-row s-over">
+          <span class="lbl">1,000円超過分（はみ出し）</span>
+          <span class="val">＋${r.over.toLocaleString()}円</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── init ──────────────────────────────────────────────────
+addProduct();
+addProduct();
+addProduct();
+</script>
+</body>
+</html>
