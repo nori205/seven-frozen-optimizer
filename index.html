@@ -12,7 +12,7 @@
       background: #f0f2f5;
       color: #222;
       min-height: 100vh;
-      padding-bottom: 40px;
+      padding-bottom: 48px;
     }
 
     header {
@@ -35,26 +35,12 @@
       border-radius: 10px;
       padding: 12px 14px;
     }
-    .campaign-box h3 {
-      font-size: 13px;
-      font-weight: bold;
-      color: #7d5a00;
-      margin-bottom: 6px;
-    }
-    .campaign-box p {
-      font-size: 13px;
-      color: #5a4000;
-      line-height: 1.6;
-    }
+    .campaign-box h3 { font-size: 13px; font-weight: bold; color: #7d5a00; margin-bottom: 6px; }
+    .campaign-box p  { font-size: 13px; color: #5a4000; line-height: 1.6; }
     .campaign-box p + p { margin-top: 2px; }
 
     .section { margin: 14px; }
-    .section-label {
-      font-size: 15px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #333;
-    }
+    .section-label { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #333; }
 
     /* ---- Product card ---- */
     .product-card {
@@ -78,11 +64,8 @@
       padding: 7px 10px;
       background: #fafafa;
     }
-    .card-header input[type="text"]:focus {
-      outline: none;
-      border-color: #e74c3c;
-      background: white;
-    }
+    .card-header input[type="text"]:focus { outline: none; border-color: #e74c3c; background: white; }
+
     .btn-delete {
       background: #e0e0e0;
       color: #555;
@@ -96,17 +79,9 @@
     }
     .btn-delete:active { background: #f5c6cb; color: #c0392b; }
 
-    .card-fields {
-      display: flex;
-      gap: 10px;
-    }
+    .card-fields { display: flex; gap: 10px; }
     .field-wrap { flex: 1; }
-    .field-wrap label {
-      display: block;
-      font-size: 11px;
-      color: #777;
-      margin-bottom: 4px;
-    }
+    .field-wrap label { display: block; font-size: 11px; color: #777; margin-bottom: 4px; }
     .field-wrap input[type="number"] {
       width: 100%;
       font-size: 17px;
@@ -118,11 +93,7 @@
     }
     .field-wrap input[type="number"]::-webkit-outer-spin-button,
     .field-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-    .field-wrap input[type="number"]:focus {
-      outline: none;
-      border-color: #e74c3c;
-      background: white;
-    }
+    .field-wrap input[type="number"]:focus { outline: none; border-color: #e74c3c; background: white; }
 
     .btn-add {
       display: flex;
@@ -157,67 +128,113 @@
     }
     .btn-calc:active { opacity: 0.85; transform: scale(0.99); }
 
-    /* ---- Result ---- */
-    .result-card {
+    /* ---- Trip card ---- */
+    .trip-card {
       background: white;
       border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.13);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .result-heading {
-      font-size: 17px;
-      font-weight: bold;
-      text-align: center;
-      color: #c0392b;
-      margin-bottom: 14px;
+    .trip-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
       padding-bottom: 10px;
-      border-bottom: 2px solid #f9e8e7;
+      border-bottom: 2px solid #f0f0f0;
     }
+    .trip-badge {
+      background: #e74c3c;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .trip-badge.leftover { background: #aaa; }
+    .trip-subtitle { font-size: 13px; color: #888; }
 
     .combo-table {
       background: #fafafa;
       border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       border: 1px solid #eee;
     }
     .combo-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 12px;
+      padding: 8px 12px;
       border-bottom: 1px solid #eee;
       font-size: 14px;
     }
     .combo-row:last-child { border-bottom: none; }
-    .combo-row.total-row {
-      background: #f0f2f5;
-      font-weight: bold;
-      font-size: 14px;
-    }
+    .combo-row.total-row { background: #f0f2f5; font-weight: bold; }
     .combo-name { color: #333; font-weight: bold; }
     .combo-detail { color: #555; text-align: right; line-height: 1.4; }
 
-    .summary { margin-top: 4px; }
+    .summary { }
     .sum-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #f0f0f0;
       font-size: 15px;
     }
     .sum-row:last-child { border-bottom: none; }
-    .sum-row .label { color: #555; }
-    .sum-row .value { font-weight: bold; }
-    .sum-row.discount .value { color: #27ae60; }
-    .sum-row.after  { padding: 12px 0; }
-    .sum-row.after .label { font-size: 16px; font-weight: bold; color: #222; }
-    .sum-row.after .value { font-size: 22px; font-weight: bold; color: #c0392b; }
-    .sum-row.lottery .label { color: #1a5eb8; font-weight: bold; }
-    .sum-row.lottery .value { color: #1a5eb8; font-size: 18px; }
-    .sum-row.over   .label { color: #aaa; font-size: 13px; }
-    .sum-row.over   .value { color: #aaa; font-size: 13px; }
+    .sum-row .lbl { color: #555; }
+    .sum-row .val { font-weight: bold; }
+    .sum-row.discount .val { color: #27ae60; }
+    .sum-row.after .lbl { font-size: 16px; font-weight: bold; color: #222; }
+    .sum-row.after .val { font-size: 22px; font-weight: bold; color: #c0392b; }
+    .sum-row.lottery .lbl { color: #1a5eb8; font-weight: bold; }
+    .sum-row.lottery .val { color: #1a5eb8; font-size: 18px; }
+    .sum-row.over   .lbl { color: #aaa; font-size: 13px; }
+    .sum-row.over   .val { color: #aaa; font-size: 13px; }
+
+    /* ---- Grand total ---- */
+    .grand-card {
+      background: linear-gradient(135deg, #1a1a2e, #2c2c54);
+      color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .grand-title {
+      font-size: 14px;
+      font-weight: bold;
+      opacity: 0.7;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    .grand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .grand-row:last-child { border-bottom: none; }
+    .grand-row .lbl { opacity: 0.75; }
+    .grand-row .val { font-weight: bold; }
+    .grand-row.g-discount .val { color: #2ecc71; }
+    .grand-row.g-total   { padding: 10px 0 4px; }
+    .grand-row.g-total .lbl { font-size: 16px; font-weight: bold; opacity: 1; }
+    .grand-row.g-total .val { font-size: 24px; color: #f9ca24; }
+    .grand-row.g-lottery .val { color: #74b9ff; font-size: 17px; }
+
+    /* ---- Leftover ---- */
+    .leftover-note {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+      text-align: center;
+    }
 
     .no-result {
       text-align: center;
@@ -226,12 +243,7 @@
       font-size: 14px;
       line-height: 1.7;
     }
-    .spinner {
-      text-align: center;
-      padding: 28px;
-      font-size: 14px;
-      color: #888;
-    }
+    .spinner { text-align: center; padding: 28px; font-size: 14px; color: #888; }
     .err-box {
       background: #fdf2f2;
       border: 1px solid #f5c6cb;
@@ -247,20 +259,20 @@
 
 <header>
   <h1>セブンイレブン 冷食キャンペーン 最適購入計算機</h1>
-  <p>2つのキャンペーンを最大活用できる組み合わせを自動計算</p>
+  <p>複数回の会計に分けた最適な買い方を自動計算</p>
 </header>
 
 <div class="campaign-box">
   <h3>▼ 適用キャンペーン</h3>
   <p>① 冷凍食品 <strong>3点ごとに200円引き</strong>（何セットでも適用）</p>
-  <p>② 1会計 <strong>1,000円以上</strong> でくじ1枚（何円でも1回のみ）</p>
+  <p>② 1会計 <strong>1,000円以上</strong> でくじ1枚（1会計につき1枚のみ）</p>
 </div>
 
 <div class="section">
   <div class="section-label">商品リスト</div>
   <div id="product-list"></div>
   <button class="btn-add" onclick="addProduct()">＋ 商品を追加</button>
-  <button class="btn-calc" onclick="onCalculate()">最適な購入組み合わせを計算</button>
+  <button class="btn-calc" onclick="onCalculate()">最適な買い方を計算</button>
 </div>
 
 <div id="result-section" class="section"></div>
@@ -273,28 +285,22 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // -------- Product management --------
 function addProduct() {
-  products.push({ id: idCounter++, name: '', price: '', stock: '' });
+  products.push({ id: idCounter++, name: '', price: '', qty: '' });
   renderProducts();
 }
-
 function removeProduct(id) {
   products = products.filter(p => p.id !== id);
   renderProducts();
 }
-
 function updateField(id, field, value) {
   const p = products.find(p => p.id === id);
   if (p) p[field] = value;
 }
-
 function displayName(p, idx) {
   return p.name.trim() || ('商品' + (LETTERS[idx] || (idx + 1)));
 }
-
 function esc(s) {
-  return String(s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function renderProducts() {
@@ -315,10 +321,10 @@ function renderProducts() {
                  oninput="updateField(${p.id},'price',this.value)">
         </div>
         <div class="field-wrap">
-          <label>在庫数（点）</label>
-          <input type="number" inputmode="numeric" min="1" placeholder="例: 5"
-                 value="${esc(p.stock)}"
-                 oninput="updateField(${p.id},'stock',this.value)">
+          <label>欲しい数（点）</label>
+          <input type="number" inputmode="numeric" min="1" placeholder="例: 6"
+                 value="${esc(p.qty)}"
+                 oninput="updateField(${p.id},'qty',this.value)">
         </div>
       </div>
     </div>
@@ -329,30 +335,27 @@ function renderProducts() {
 function validate() {
   if (products.length === 0) return '商品を1つ以上追加してください。';
   for (let i = 0; i < products.length; i++) {
-    const p   = products[i];
-    const pr  = parseInt(p.price);
-    const st  = parseInt(p.stock);
-    const nm  = displayName(p, i);
-    if (!p.price.toString().trim() || isNaN(pr) || pr < 1)
+    const p  = products[i];
+    const pr = parseInt(p.price);
+    const qt = parseInt(p.qty);
+    const nm = displayName(p, i);
+    if (!String(p.price).trim() || isNaN(pr) || pr < 1)
       return nm + ' の価格（1以上の整数）を入力してください。';
-    if (!p.stock.toString().trim() || isNaN(st) || st < 1)
-      return nm + ' の在庫数（1以上の整数）を入力してください。';
+    if (!String(p.qty).trim() || isNaN(qt) || qt < 1)
+      return nm + ' の欲しい数（1以上の整数）を入力してください。';
   }
   return null;
 }
 
-// -------- Algorithm --------
-// くじは1会計につき1枚のみ（金額不問）
-// Objective: afterDiscount >= 1000 を満たしつつ afterDiscount を最小化
-//   afterDiscount = totalPrice - floor(totalItems/3)*200
-//   overshoot     = afterDiscount - 1000  （1000円超過分）
-
-function solve(prods) {
+// -------- Core solver --------
+// 残り在庫 prods[] から1回の会計で最適な組み合わせを求める
+// 条件: 割引後合計 >= 1000円
+// 目的: 割引後合計を最小化（1000円に最も近く）
+function solveOne(prods) {
   const n     = prods.length;
   const combo = new Int32Array(n);
   let best    = null;
 
-  // Precompute max total items to bound search
   const maxItems = Math.min(prods.reduce((s, p) => s + p.stock, 0), 30);
 
   function recurse(idx, items, price) {
@@ -361,7 +364,6 @@ function solve(prods) {
       const discount      = Math.floor(items / 3) * 200;
       const afterDiscount = price - discount;
       if (afterDiscount < 1000) return;
-      // 最小化: afterDiscount（= 1000円超過分も自動的に最小）
       if (best === null || afterDiscount < best.afterDiscount) {
         best = {
           combo:        Int32Array.from(combo),
@@ -370,15 +372,12 @@ function solve(prods) {
           discount,
           afterDiscount,
           overshoot:    afterDiscount - 1000,
-          lottery:      1
         };
       }
       return;
     }
-
     const { price: unitPrice, stock } = prods[idx];
     const maxQty = Math.min(stock, maxItems - items);
-
     for (let q = 0; q <= maxQty; q++) {
       combo[idx] = q;
       recurse(idx + 1, items + q, price + q * unitPrice);
@@ -390,7 +389,37 @@ function solve(prods) {
   return best;
 }
 
-// -------- UI handlers --------
+// -------- Multi-trip solver --------
+// 全アイテムを複数回の会計に分割する（貪欲法）
+function solveAllTrips(prods) {
+  // remaining: 各商品の残り購入数
+  const remaining = prods.map(p => ({ ...p }));
+  const trips = [];
+
+  while (true) {
+    const totalLeft = remaining.reduce((s, p) => s + p.stock, 0);
+    if (totalLeft === 0) break;
+
+    const result = solveOne(remaining);
+    if (!result) break; // これ以上1000円会計を組めない
+
+    trips.push({ result, names: prods.map(p => p.name) });
+
+    // 購入分を差し引く
+    for (let i = 0; i < remaining.length; i++) {
+      remaining[i].stock -= result.combo[i];
+    }
+  }
+
+  // 余り（キャンペーン対象外）
+  const leftover = remaining
+    .map((p, i) => ({ name: prods[i].name, price: prods[i].price, qty: p.stock }))
+    .filter(p => p.qty > 0);
+
+  return { trips, leftover };
+}
+
+// -------- UI handler --------
 function onCalculate() {
   const rs  = document.getElementById('result-section');
   const err = validate();
@@ -399,95 +428,158 @@ function onCalculate() {
   const prods = products.map((p, i) => ({
     name:  displayName(p, i),
     price: parseInt(p.price),
-    stock: Math.min(parseInt(p.stock), 30)
+    stock: Math.min(parseInt(p.qty), 30),
   }));
-
-  // Estimate search size
-  const combCount = prods.reduce((a, p) => a * (p.stock + 1), 1);
 
   rs.innerHTML = '<div class="spinner">計算中…</div>';
 
-  // Defer to let the DOM repaint
   setTimeout(() => {
-    // If too large, cap stocks and warn
     let warning = '';
+    const combCount = prods.reduce((a, p) => a * (p.stock + 1), 1);
     if (combCount > 8_000_000) {
-      // apply cap so search finishes quickly
       prods.forEach(p => { p.stock = Math.min(p.stock, 6); });
-      warning = '在庫数が多いため、各商品の探索上限を6点に絞って計算しました。';
+      warning = '数量が多いため、各商品の探索上限を6点に絞って計算しました。';
     }
 
-    const result = solve(prods);
-    renderResult(result, prods, warning);
+    const { trips, leftover } = solveAllTrips(prods);
+    renderAllTrips(trips, leftover, prods, warning);
   }, 30);
 }
 
-function renderResult(result, prods, warning) {
+// -------- Render --------
+function renderAllTrips(trips, leftover, prods, warning) {
   const rs = document.getElementById('result-section');
 
-  if (!result) {
-    rs.innerHTML = `
-      <div class="result-card">
-        <div class="no-result">
-          条件を満たす購入組み合わせが見つかりませんでした。<br>
-          在庫数を増やすか、価格をご確認ください。
-        </div>
-      </div>`;
+  if (trips.length === 0 && leftover.length === 0) {
+    rs.innerHTML = `<div class="err-box">条件を満たす組み合わせが見つかりませんでした。数量や価格をご確認ください。</div>`;
     return;
   }
 
-  const bought = Array.from(result.combo)
-    .map((qty, i) => ({ qty, prod: prods[i] }))
-    .filter(x => x.qty > 0);
+  if (trips.length === 0) {
+    rs.innerHTML = `<div class="err-box">入力した商品だけでは1,000円以上の会計が組めませんでした。価格や数量をご確認ください。</div>`;
+    return;
+  }
 
-  const comboRows = bought.map(x => `
-    <div class="combo-row">
-      <span class="combo-name">${esc(x.prod.name)}</span>
-      <span class="combo-detail">
-        ${x.qty}点<br>
-        <small>${x.prod.price.toLocaleString()}円 × ${x.qty} = ${(x.prod.price * x.qty).toLocaleString()}円</small>
-      </span>
-    </div>
-  `).join('');
+  let html = warning ? `<div class="err-box" style="margin-bottom:12px;font-size:13px;">${esc(warning)}</div>` : '';
 
-  const sets = Math.floor(result.totalItems / 3);
+  // 各会計カード
+  trips.forEach((t, i) => {
+    const r      = t.result;
+    const sets   = Math.floor(r.totalItems / 3);
+    const bought = Array.from(r.combo)
+      .map((qty, j) => ({ qty, name: prods[j].name, price: prods[j].price }))
+      .filter(x => x.qty > 0);
 
-  rs.innerHTML = `
-    <div class="result-card">
-      ${warning ? `<div class="err-box" style="margin-bottom:12px;font-size:13px;">${esc(warning)}</div>` : ''}
-      <div class="result-heading">最適な購入組み合わせ</div>
-
-      <div class="combo-table">
-        ${comboRows}
-        <div class="combo-row total-row">
-          <span>合計</span>
-          <span>${result.totalItems}点</span>
-        </div>
+    const comboRows = bought.map(x => `
+      <div class="combo-row">
+        <span class="combo-name">${esc(x.name)}</span>
+        <span class="combo-detail">
+          ${x.qty}点<br>
+          <small>${x.price.toLocaleString()}円 × ${x.qty} = ${(x.price * x.qty).toLocaleString()}円</small>
+        </span>
       </div>
+    `).join('');
 
-      <div class="summary">
-        <div class="sum-row">
-          <span class="label">定価合計</span>
-          <span class="value">${result.totalPrice.toLocaleString()}円</span>
+    html += `
+      <div class="trip-card">
+        <div class="trip-heading">
+          <span class="trip-badge">${i + 1}回目の会計</span>
+          <span class="trip-subtitle">${r.totalItems}点 / 割引後 ${r.afterDiscount.toLocaleString()}円</span>
         </div>
-        <div class="sum-row discount">
-          <span class="label">割引額（${sets}セット × 200円）</span>
-          <span class="value">－${result.discount.toLocaleString()}円</span>
+        <div class="combo-table">
+          ${comboRows}
+          <div class="combo-row total-row">
+            <span>小計</span>
+            <span>${r.totalItems}点</span>
+          </div>
         </div>
-        <div class="sum-row after">
-          <span class="label">割引後合計</span>
-          <span class="value">${result.afterDiscount.toLocaleString()}円</span>
+        <div class="summary">
+          <div class="sum-row">
+            <span class="lbl">定価合計</span>
+            <span class="val">${r.totalPrice.toLocaleString()}円</span>
+          </div>
+          <div class="sum-row discount">
+            <span class="lbl">割引額（${sets}セット × 200円）</span>
+            <span class="val">－${r.discount.toLocaleString()}円</span>
+          </div>
+          <div class="sum-row after">
+            <span class="lbl">支払金額</span>
+            <span class="val">${r.afterDiscount.toLocaleString()}円</span>
+          </div>
+          <div class="sum-row lottery">
+            <span class="lbl">🎟 くじ</span>
+            <span class="val">1枚</span>
+          </div>
+          <div class="sum-row over">
+            <span class="lbl">1,000円超過分</span>
+            <span class="val">＋${r.overshoot.toLocaleString()}円</span>
+          </div>
         </div>
-        <div class="sum-row lottery">
-          <span class="label">🎟 くじ枚数</span>
-          <span class="value">${result.lottery}枚</span>
+      </div>`;
+  });
+
+  // 余りカード
+  if (leftover.length > 0) {
+    const leftRows = leftover.map(x => `
+      <div class="combo-row">
+        <span class="combo-name">${esc(x.name)}</span>
+        <span class="combo-detail">
+          ${x.qty}点<br>
+          <small>${x.price.toLocaleString()}円 × ${x.qty} = ${(x.price * x.qty).toLocaleString()}円</small>
+        </span>
+      </div>
+    `).join('');
+    const leftTotal = leftover.reduce((s, x) => s + x.price * x.qty, 0);
+
+    html += `
+      <div class="trip-card">
+        <div class="trip-heading">
+          <span class="trip-badge leftover">キャンペーン対象外</span>
+          <span class="trip-subtitle">単独では1,000円に届かない残り</span>
         </div>
-        <div class="sum-row over">
-          <span class="label">1,000円超過分（はみ出し）</span>
-          <span class="value">＋${result.overshoot.toLocaleString()}円</span>
+        <div class="combo-table">
+          ${leftRows}
         </div>
+        <p class="leftover-note">前の会計に追加するか、別途購入してください</p>
+      </div>`;
+  }
+
+  // 合計サマリー
+  const grandPrice    = trips.reduce((s, t) => s + t.result.totalPrice, 0);
+  const grandDiscount = trips.reduce((s, t) => s + t.result.discount, 0);
+  const grandAfter    = trips.reduce((s, t) => s + t.result.afterDiscount, 0);
+  const grandItems    = trips.reduce((s, t) => s + t.result.totalItems, 0);
+
+  html += `
+    <div class="grand-card">
+      <div class="grand-title">▼ 全会計 合計</div>
+      <div class="grand-row">
+        <span class="lbl">会計回数</span>
+        <span class="val">${trips.length}回</span>
+      </div>
+      <div class="grand-row">
+        <span class="lbl">購入点数</span>
+        <span class="val">${grandItems}点</span>
+      </div>
+      <div class="grand-row">
+        <span class="lbl">定価合計</span>
+        <span class="val">${grandPrice.toLocaleString()}円</span>
+      </div>
+      <div class="grand-row g-discount">
+        <span class="lbl">総割引額</span>
+        <span class="val">－${grandDiscount.toLocaleString()}円</span>
+      </div>
+      <div class="grand-row g-total">
+        <span class="lbl">総支払金額</span>
+        <span class="val">${grandAfter.toLocaleString()}円</span>
+      </div>
+      <div class="grand-row g-lottery">
+        <span class="lbl">🎟 くじ合計</span>
+        <span class="val">${trips.length}枚</span>
       </div>
     </div>`;
+
+  rs.innerHTML = html;
 }
 
 // -------- Init --------
