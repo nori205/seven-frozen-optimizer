@@ -324,6 +324,7 @@ function solveTopN(items, maxN) {
   function rec(i, cnt, price) {
     if (i === n) {
       if (!cnt) return;
+      if (cnt % 3 !== 0) return;        // 3の倍数以外は割引が無駄になるためスキップ
       const disc  = Math.floor(cnt / 3) * 200;
       const after = price - disc;
       if (after < 1000) return;
