@@ -253,7 +253,7 @@
 <div class="campaign-box">
   <h3>▼ 適用キャンペーン</h3>
   <p>① 冷凍食品 <strong>3点ごとに200円引き</strong>（何セットでも適用）</p>
-  <p>② 1会計 <strong>1,000円以上</strong> でくじ1枚（1,000円ごとに1枚）</p>
+  <p>② 1会計 <strong>1,000円以上</strong> でくじ1枚（何円でも1回のみ）</p>
 </div>
 
 <div class="section">
@@ -342,14 +342,14 @@ function validate() {
 }
 
 // -------- Algorithm --------
-// Objective (minimise lexicographically): [ overshoot, afterDiscount ]
-//   overshoot    = afterDiscount % 1000
-//   afterDiscount= totalPrice - floor(totalItems/3)*200
-// Constraint: afterDiscount >= 1000
+// くじは1会計につき1枚のみ（金額不問）
+// Objective: afterDiscount >= 1000 を満たしつつ afterDiscount を最小化
+//   afterDiscount = totalPrice - floor(totalItems/3)*200
+//   overshoot     = afterDiscount - 1000  （1000円超過分）
 
 function solve(prods) {
   const n     = prods.length;
-  const combo = new Int32Array(n);   // current quantities
+  const combo = new Int32Array(n);
   let best    = null;
 
   // Precompute max total items to bound search
@@ -358,23 +358,19 @@ function solve(prods) {
   function recurse(idx, items, price) {
     if (idx === n) {
       if (items === 0) return;
-      const discount     = Math.floor(items / 3) * 200;
+      const discount      = Math.floor(items / 3) * 200;
       const afterDiscount = price - discount;
       if (afterDiscount < 1000) return;
-      const overshoot    = afterDiscount % 1000;
-      if (
-        best === null ||
-        overshoot < best.overshoot ||
-        (overshoot === best.overshoot && afterDiscount < best.afterDiscount)
-      ) {
+      // 最小化: afterDiscount（= 1000円超過分も自動的に最小）
+      if (best === null || afterDiscount < best.afterDiscount) {
         best = {
           combo:        Int32Array.from(combo),
           totalItems:   items,
           totalPrice:   price,
           discount,
           afterDiscount,
-          overshoot,
-          lottery:      Math.floor(afterDiscount / 1000)
+          overshoot:    afterDiscount - 1000,
+          lottery:      1
         };
       }
       return;
@@ -488,7 +484,7 @@ function renderResult(result, prods, warning) {
         </div>
         <div class="sum-row over">
           <span class="label">1,000円超過分（はみ出し）</span>
-          <span class="value">${result.overshoot.toLocaleString()}円</span>
+          <span class="value">＋${result.overshoot.toLocaleString()}円</span>
         </div>
       </div>
     </div>`;
