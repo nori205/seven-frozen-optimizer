@@ -296,13 +296,13 @@ function renderList() {
 }
 
 // ── validation ──────────────────────────────────────────
+// 価格・数量が両方入力されている行だけを有効とみなす
+function filledProds() {
+  return prods.filter(p => String(p.price).trim() !== '' && String(p.qty).trim() !== '');
+}
 function validate() {
-  if (!prods.length) return '商品を1つ以上追加してください。';
-  for (let i = 0; i < prods.length; i++) {
-    const p = prods[i];
-    if (isNaN(+p.price) || +p.price < 1) return nm(p,i) + ' の価格を入力してください。';
-    if (isNaN(+p.qty)   || +p.qty   < 1) return nm(p,i) + ' の欲しい数を入力してください。';
-  }
+  const filled = filledProds();
+  if (!filled.length) return '価格と欲しい数を入力した商品が1つもありません。';
   return null;
 }
 
@@ -357,7 +357,7 @@ function onCalc() {
   const err = validate();
   if (err) { res.innerHTML = `<div class="err">${esc(err)}</div>`; return; }
 
-  const items = prods.map((p, i) => ({
+  const items = filledProds().map((p, i) => ({
     name:  nm(p, i),
     price: +p.price,
     stock: Math.min(+p.qty, 30),
