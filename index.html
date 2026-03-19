@@ -237,44 +237,6 @@
       border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.6;
     }
 
-    /* ── レコメンドセクション ── */
-    #recommend { margin: 0 14px 14px; }
-    .rec-box {
-      background: #fffbec;
-      border: 1.5px solid #ffd166;
-      border-radius: 12px;
-      padding: 13px 14px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #5a4100;
-    }
-    .rec-ttl {
-      font-size: 14px;
-      font-weight: bold;
-      color: #856404;
-      margin-bottom: 6px;
-    }
-    .rec-ok {
-      background: #e8f8f5;
-      border: 1.5px solid #2a9d8f;
-      border-radius: 10px;
-      padding: 10px 13px;
-      font-size: 13px;
-      color: #1a6050;
-      margin-bottom: 10px;
-      line-height: 1.7;
-    }
-    .rec-compare {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 12px;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .rec-best { color: var(--red); font-weight: bold; }
   </style>
 </head>
 <body>
@@ -307,8 +269,6 @@
   <button class="btn-add" onclick="addProd()">＋ 商品を追加</button>
 </div>
 
-<div id="recommend"></div>
-
 <div class="sec" style="margin-top:0">
   <button class="btn-calc" onclick="onCalc()">何回の会計に分ければいいか計算する</button>
 </div>
@@ -331,16 +291,14 @@ const tinc = v => Math.round(v * 1.08);   // 税抜→税込変換（8%軽減税
 function addProd() {
   prods.push({ id: nextId++, name: '', price: '', qty: '' });
   renderList();
-  updateRecommend();
 }
 function delProd(id) {
   prods = prods.filter(p => p.id !== id);
   renderList();
-  updateRecommend();
 }
 function setF(id, f, v) {
   const p = prods.find(p => p.id === id);
-  if (p) { p[f] = v; updateRecommend(); }
+  if (p) p[f] = v;
 }
 function renderList() {
   $('plist').innerHTML = prods.map((p, i) => `
@@ -372,125 +330,6 @@ function filledProds() {
 function validate() {
   if (!filledProds().length) return '価格と欲しい数を入力した商品が1つもありません。';
   return null;
-}
-
-// ── リアルタイムレコメンド ────────────────────────────────
-function updateRecommend() {
-  const recEl = $('recommend');
-  const fp = filledProds().map((p, i) => ({
-    name:       nm(p, i),
-    priceTaxInc: +p.price,                      // 入力値（税込）
-    price:       Math.round(+p.price / 1.08),   // 税抜換算（計算用）
-    qty:         +p.qty,
-  })).filter(p => p.price > 0 && p.qty > 0);
-
-  if (!fp.length) { recEl.innerHTML = ''; return; }
-
-  const totalItems  = fp.reduce((s, p) => s + p.qty, 0);
-  const totalPreTax = fp.reduce((s, p) => s + p.price * p.qty, 0);
-
-  if (totalItems === 0) { recEl.innerHTML = ''; return; }
-
-  // 最安値商品（税抜価格でソート）
-  const sorted      = fp.slice().sort((a, b) => a.price - b.price);
-  const cheapest    = sorted[0];
-  const cheapTaxInc = cheapest.priceTaxInc;   // 入力値そのまま（税込）
-  const cheapName   = esc(cheapest.name);
-
-  // ── ルールA: 3個ごとに¥200引き ──────────────────────────
-  // 割引は税抜き価格に対して適用。税込み節約額 = ¥200×1.08 = ¥216/セット
-  const setsNow = Math.floor(totalItems / 3);
-  const rem     = totalItems % 3;
-  const neededA = rem === 0 ? 3 : (3 - rem);
-  const addCostA = neededA * cheapTaxInc;  // 追加費用（税込）
-  const discPerSet = 216;                  // 税込み節約額/セット
-
-  let ruleAHtml;
-  if (rem === 0) {
-    const savingStr = setsNow > 0
-      ? `（${setsNow}セット・節約<strong>¥${(setsNow * discPerSet).toLocaleString()}</strong>税込）`
-      : '';
-    ruleAHtml = `
-      <div class="rec-ok">
-        ✅ <strong>ルールA発動中！</strong>${savingStr}<br>
-        <span style="font-size:12px;">次のセットまであと3個追加が必要</span>
-      </div>`;
-  } else {
-    const net    = discPerSet - addCostA;
-    const netStr = net >= 0
-      ? `実質 <strong>¥${net.toLocaleString()} のお得</strong>！`
-      : `追加費用<strong>¥${addCostA.toLocaleString()}税込</strong>で割引¥${discPerSet}税込を獲得`;
-    const qtyStr = neededA === 1 ? `1個` : `${neededA}個`;
-    ruleAHtml = `
-      <div class="rec-box">
-        <div class="rec-ttl">💡 あと${neededA}個追加でセット割引！【ルールA】</div>
-        <div>→「${cheapName}」(¥${cheapTaxInc.toLocaleString()}税込) を${qtyStr}追加すると<br>
-        &nbsp;&nbsp;節約額 <strong>¥${discPerSet.toLocaleString()}税込</strong>・${netStr}</div>
-      </div>`;
-  }
-
-  // ── ルールB: 税抜¥1,000以上でくじ ──────────────────────
-  const shortage = 1000 - totalPreTax;   // 税抜不足額
-  let ruleBHtml;
-
-  if (shortage <= 0) {
-    ruleBHtml = `
-      <div class="rec-ok">
-        ✅ <strong>ルールB達成！</strong>（税抜合計¥${totalPreTax.toLocaleString()}） 🎟 くじが引けます！
-      </div>`;
-  } else {
-    // 不足額を1個で超えられる最安値の商品を探す
-    const singleCover = sorted.find(p => p.price >= shortage);
-    let itemsToAdd, addSuggest;
-    if (singleCover) {
-      itemsToAdd = 1;
-      addSuggest = `「${esc(singleCover.name)}」1個(¥${singleCover.priceTaxInc.toLocaleString()}税込)`;
-    } else {
-      itemsToAdd = Math.ceil(shortage / cheapest.price);
-      addSuggest = `「${cheapName}」${itemsToAdd}個(¥${(itemsToAdd * cheapTaxInc).toLocaleString()}税込)`;
-    }
-
-    // Rule B追加後にセット外が出る場合の補足
-    const afterBTotal = totalItems + itemsToAdd;
-    const afterBRem   = afterBTotal % 3;
-    let setBnote = '';
-    if (afterBRem !== 0) {
-      const moreNeeded = 3 - afterBRem;
-      const moreCost   = moreNeeded * cheapTaxInc;
-      setBnote = `<div style="font-size:12px;margin-top:6px;color:#856404;">
-        ⚠️ この追加後は ${afterBTotal}個中<strong>${afterBRem}個がセット外</strong>に。<br>
-        さらに<strong>${moreNeeded}個(¥${moreCost.toLocaleString()}税込)</strong>追加すると
-        ${Math.floor((afterBTotal + moreNeeded) / 3)}セット完成！
-      </div>`;
-    }
-
-    ruleBHtml = `
-      <div class="rec-box">
-        <div class="rec-ttl">🎟 あと税抜¥${shortage.toLocaleString()}でくじ獲得！【ルールB】</div>
-        <div>→ ${addSuggest} を追加するとくじが引けます</div>
-        ${setBnote}
-      </div>`;
-  }
-
-  // ── どちらがお得か比較表示 ────────────────────────────
-  // 両ルールとも未達成の場合のみ比較
-  let compareHtml = '';
-  if (rem !== 0 && shortage > 0) {
-    const costA = addCostA;
-    const singleCover2 = sorted.find(p => p.price >= shortage);
-    const costB = singleCover2
-      ? tinc(singleCover2.price)
-      : Math.ceil(shortage / cheapest.price) * cheapTaxInc;
-    const aStr = `ルールA: ¥${costA.toLocaleString()}`;
-    const bStr = `ルールB: ¥${costB.toLocaleString()}`;
-    if (costA <= costB) {
-      compareHtml = `<div class="rec-compare">追加費用比較 → <span class="rec-best">${aStr}（おすすめ）</span> / ${bStr}</div>`;
-    } else {
-      compareHtml = `<div class="rec-compare">追加費用比較 → ${aStr} / <span class="rec-best">${bStr}（おすすめ）</span></div>`;
-    }
-  }
-
-  recEl.innerHTML = ruleAHtml + ruleBHtml + compareHtml;
 }
 
 // ── 1回分の最適解（貪欲法の1ステップ）────────────────────
