@@ -492,6 +492,8 @@ function showResult(trips, leftover, items, warn) {
     let adviceHtml = '';
 
     if (rem3 !== 0) {
+      const curDisc     = Math.floor(leftTotalQty / 3) * 200;
+      const curShortage = Math.max(0, 1000 - (leftTotalPrice - curDisc));
       // 案①: 最小追加でセット完成
       const addCount  = 3 - rem3;
       const newQty    = leftTotalQty + addCount;
@@ -515,7 +517,7 @@ function showResult(trips, leftover, items, warn) {
       adviceHtml = `
         <div class="advice-box">
           <div class="adv-ttl">💡 追加購入でくじ・セット割引をゲット！</div>
-          <div style="margin-bottom:6px;font-size:12px;">現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）</div>
+          <div style="margin-bottom:6px;font-size:12px;">現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）／ あと税抜<strong>¥${curShortage.toLocaleString()}不足</strong></div>
           <div class="adv-item"><span class="adv-badge">案①</span><span>${p1}</span></div>
           <div class="adv-item"><span class="adv-badge">案②</span><span>${p2}</span></div>
         </div>`;
@@ -534,7 +536,7 @@ function showResult(trips, leftover, items, warn) {
         adviceHtml = `
           <div class="advice-box">
             <div class="adv-ttl">💡 追加購入でくじ・セット割引をゲット！</div>
-            <div style="margin-bottom:6px;font-size:12px;">現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）</div>
+            <div style="margin-bottom:6px;font-size:12px;">現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）／ あと税抜<strong>¥${shortage.toLocaleString()}不足</strong></div>
             <div class="adv-item"><span class="adv-badge">案①</span><span><strong>3点</strong>追加・1点あたり税抜<strong>約${per3.toLocaleString()}円以上</strong>（${leftTotalQty+3}個・${Math.floor((leftTotalQty+3)/3)}セット）</span></div>
             <div class="adv-item"><span class="adv-badge">案②</span><span><strong>6点</strong>追加・1点あたり税抜<strong>約${per6.toLocaleString()}円以上</strong>（${leftTotalQty+6}個・${Math.floor((leftTotalQty+6)/3)}セット）</span></div>
           </div>`;
