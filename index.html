@@ -297,8 +297,8 @@
 </div>
 
 <div style="margin: 10px 14px 0; background:#e8f4fd; border:1.5px solid #90caf9; border-radius:10px; padding:9px 13px; font-size:12px; color:#1565c0; line-height:1.7;">
-  📝 <strong>価格は税抜き（本体価格）で入力してください。</strong><br>
-  表示・計算はすべて税込み（×1.08）で行います。
+  📝 <strong>価格は税込みで入力してください。</strong><br>
+  割引・¥1,000判定は内部で税抜き換算（÷1.08）して計算します。
 </div>
 
 <div class="sec">
@@ -352,7 +352,7 @@ function renderList() {
       </div>
       <div class="pc-flds">
         <div class="pc-f">
-          <label>価格（税抜・円）</label>
+          <label>価格（税込・円）</label>
           <input type="number" inputmode="numeric" min="1" placeholder="298"
                  value="${esc(p.price)}" oninput="setF(${p.id},'price',this.value)">
         </div>
@@ -378,9 +378,10 @@ function validate() {
 function updateRecommend() {
   const recEl = $('recommend');
   const fp = filledProds().map((p, i) => ({
-    name:  nm(p, i),
-    price: +p.price,
-    qty:   +p.qty,
+    name:       nm(p, i),
+    priceTaxInc: +p.price,                      // 入力値（税込）
+    price:       Math.round(+p.price / 1.08),   // 税抜換算（計算用）
+    qty:         +p.qty,
   })).filter(p => p.price > 0 && p.qty > 0);
 
   if (!fp.length) { recEl.innerHTML = ''; return; }
@@ -393,7 +394,7 @@ function updateRecommend() {
   // 最安値商品（税抜価格でソート）
   const sorted      = fp.slice().sort((a, b) => a.price - b.price);
   const cheapest    = sorted[0];
-  const cheapTaxInc = tinc(cheapest.price);
+  const cheapTaxInc = cheapest.priceTaxInc;   // 入力値そのまま（税込）
   const cheapName   = esc(cheapest.name);
 
   // ── ルールA: 3個ごとに¥200引き ──────────────────────────
@@ -443,7 +444,7 @@ function updateRecommend() {
     let itemsToAdd, addSuggest;
     if (singleCover) {
       itemsToAdd = 1;
-      addSuggest = `「${esc(singleCover.name)}」1個(¥${tinc(singleCover.price).toLocaleString()}税込)`;
+      addSuggest = `「${esc(singleCover.name)}」1個(¥${singleCover.priceTaxInc.toLocaleString()}税込)`;
     } else {
       itemsToAdd = Math.ceil(shortage / cheapest.price);
       addSuggest = `「${cheapName}」${itemsToAdd}個(¥${(itemsToAdd * cheapTaxInc).toLocaleString()}税込)`;
@@ -552,9 +553,10 @@ function onCalc() {
   if (err) { res.innerHTML = `<div class="err">${esc(err)}</div>`; return; }
 
   const items = filledProds().map((p, i) => ({
-    name:  nm(p, i),
-    price: +p.price,
-    stock: Math.min(+p.qty, 30),
+    name:        nm(p, i),
+    priceTaxInc: +p.price,                    // 入力値（税込・表示用）
+    price:       Math.round(+p.price / 1.08), // 税抜換算（計算用）
+    stock:       Math.min(+p.qty, 30),
   }));
 
   let warn = '';
@@ -595,7 +597,7 @@ function showResult(trips, leftover, items, warn) {
         <span class="tr-name">${esc(x.item.name)}</span>
         <span class="tr-right">
           <strong>${x.q}点</strong><br>
-          <small>${tinc(x.item.price).toLocaleString()}円×${x.q} = ${tinc(x.item.price * x.q).toLocaleString()}円（税込）</small>
+          <small>${x.item.priceTaxInc.toLocaleString()}円×${x.q} = ${(x.item.priceTaxInc * x.q).toLocaleString()}円（税込）</small>
         </span>
       </div>`).join('');
 
@@ -642,7 +644,7 @@ function showResult(trips, leftover, items, warn) {
       <div class="tr">
         <span class="tr-name">${esc(x.name)}</span>
         <span class="tr-right"><strong>${x.stock}点</strong><br>
-          <small>${tinc(x.price).toLocaleString()}円×${x.stock} = ${tinc(x.price * x.stock).toLocaleString()}円（税込）</small>
+          <small>${x.priceTaxInc.toLocaleString()}円×${x.stock} = ${(x.priceTaxInc * x.stock).toLocaleString()}円（税込）</small>
         </span>
       </div>`).join('');
 
