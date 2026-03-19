@@ -260,7 +260,7 @@
 
 <div style="margin: 10px 14px 0; background:#e8f4fd; border:1.5px solid #90caf9; border-radius:10px; padding:9px 13px; font-size:12px; color:#1565c0; line-height:1.7;">
   📝 価格は<span style="font-size:17px;font-weight:900;">税抜き（本体価格）</span>で入力してください。<br>
-  割引・¥1,000判定は税抜き価格で計算し、表示はすべて税込みで行います。
+  割引・¥1,000判定は税抜き価格で計算。割引後の支払金額は税込みで表示します。
 </div>
 
 <div class="sec">
@@ -412,7 +412,7 @@ function onCalc() {
   }, 30);
 }
 
-// ── 結果表示（すべて税込み表示）────────────────────────────
+// ── 結果表示（税抜き計算・税込み支払表示）────────────────────────────
 function showResult(trips, leftover, items, warn) {
   const res = $('result');
 
@@ -435,7 +435,7 @@ function showResult(trips, leftover, items, warn) {
         <span class="tr-name">${esc(x.item.name)}</span>
         <span class="tr-right">
           <strong>${x.q}点</strong><br>
-          <small>${tinc(x.item.price).toLocaleString()}円×${x.q} = ${tinc(x.item.price * x.q).toLocaleString()}円（税込）</small>
+          <small>${x.item.price.toLocaleString()}円×${x.q} = ${(x.item.price * x.q).toLocaleString()}円（税抜）</small>
         </span>
       </div>`).join('');
 
@@ -453,12 +453,20 @@ function showResult(trips, leftover, items, warn) {
         </div>
         <div class="summ">
           <div class="sr">
-            <span class="l">定価合計（税込）</span>
-            <span class="v">${tinc(r.price).toLocaleString()}円</span>
+            <span class="l">定価合計（税抜）</span>
+            <span class="v">${r.price.toLocaleString()}円</span>
           </div>
           <div class="sr disc">
-            <span class="l">割引（${sets}セット × 216円税込）</span>
-            <span class="v">－${tinc(r.disc).toLocaleString()}円</span>
+            <span class="l">割引（${sets}セット × 200円）</span>
+            <span class="v">－${r.disc.toLocaleString()}円</span>
+          </div>
+          <div class="sr">
+            <span class="l">課税対象（税抜）</span>
+            <span class="v">${r.after.toLocaleString()}円</span>
+          </div>
+          <div class="sr">
+            <span class="l">消費税（8%）</span>
+            <span class="v">${(tinc(r.after) - r.after).toLocaleString()}円</span>
           </div>
           <div class="sr after">
             <span class="l">支払金額（税込）</span>
@@ -482,7 +490,7 @@ function showResult(trips, leftover, items, warn) {
       <div class="tr">
         <span class="tr-name">${esc(x.name)}</span>
         <span class="tr-right"><strong>${x.stock}点</strong><br>
-          <small>${tinc(x.price).toLocaleString()}円×${x.stock} = ${tinc(x.price * x.stock).toLocaleString()}円（税込）</small>
+          <small>${x.price.toLocaleString()}円×${x.stock} = ${(x.price * x.stock).toLocaleString()}円（税抜）</small>
         </span>
       </div>`).join('');
 
@@ -573,12 +581,12 @@ function showResult(trips, leftover, items, warn) {
         <span class="v">${gItems}点</span>
       </div>
       <div class="grand-row">
-        <span class="l">定価合計（税込）</span>
-        <span class="v">${tinc(gPrice).toLocaleString()}円</span>
+        <span class="l">定価合計（税抜）</span>
+        <span class="v">${gPrice.toLocaleString()}円</span>
       </div>
       <div class="grand-row g-disc">
-        <span class="l">総割引額（税込）</span>
-        <span class="v">－${tinc(gDisc).toLocaleString()}円</span>
+        <span class="l">総割引額</span>
+        <span class="v">－${gDisc.toLocaleString()}円</span>
       </div>
       <div class="grand-row g-pay">
         <span class="l">総支払金額（税込）</span>
