@@ -296,6 +296,11 @@
   </div>
 </div>
 
+<div style="margin: 10px 14px 0; background:#e8f4fd; border:1.5px solid #90caf9; border-radius:10px; padding:9px 13px; font-size:12px; color:#1565c0; line-height:1.7;">
+  📝 <strong>価格は税抜き（本体価格）で入力してください。</strong><br>
+  表示・計算はすべて税込み（×1.08）で行います。
+</div>
+
 <div class="sec">
   <div class="sec-ttl">買いたい商品リスト</div>
   <div id="plist"></div>
@@ -647,42 +652,51 @@ function showResult(trips, leftover, items, warn) {
     let adviceHtml = '';
 
     if (rem3 !== 0) {
+      // 案①: 最小追加でセット完成
       const addCount  = 3 - rem3;
       const newQty    = leftTotalQty + addCount;
       const newDisc   = Math.floor(newQty / 3) * 200;
       const needExtra = Math.max(0, 1000 - leftTotalPrice + newDisc);
       const perItem   = needExtra > 0 ? Math.ceil(needExtra / addCount) : 0;
+      // 案②: さらに1セット多く（安い商品でまとめ買い）
+      const addCount2  = addCount + 3;
+      const newQty2    = leftTotalQty + addCount2;
+      const newDisc2   = Math.floor(newQty2 / 3) * 200;
+      const needExtra2 = Math.max(0, 1000 - leftTotalPrice + newDisc2);
+      const perItem2   = needExtra2 > 0 ? Math.ceil(needExtra2 / addCount2) : 0;
 
-      let itemLines = '';
-      if (needExtra <= 0) {
-        itemLines = `<div class="adv-item"><span class="adv-badge">+${addCount}</span><span>何でもOK！<strong>${addCount}点追加</strong>で3点セット割引が適用されます</span></div>`;
-      } else if (addCount === 1) {
-        itemLines = `<div class="adv-item"><span class="adv-badge">+1</span><span><strong>税抜${perItem.toLocaleString()}円以上</strong>の商品を1点探してください</span></div>`;
-      } else {
-        const lo = Math.round(perItem * 0.75 / 10) * 10;
-        const hi = needExtra - lo;
-        itemLines = `
-          <div class="adv-item"><span class="adv-badge">案①</span><span>同じ価格なら1点あたり <strong>税抜約${perItem.toLocaleString()}円以上</strong>を2点</span></div>
-          <div class="adv-item"><span class="adv-badge">案②</span><span>価格差があるなら <strong>税抜約${lo.toLocaleString()}円の1点</strong> ＋ <strong>税抜約${hi.toLocaleString()}円の1点</strong></span></div>`;
-      }
+      const p1 = needExtra <= 0
+        ? `<strong>${addCount}点</strong>追加・価格問わず何でもOK`
+        : `<strong>${addCount}点</strong>追加・1点あたり税抜<strong>約${perItem.toLocaleString()}円以上</strong>`;
+      const p2 = needExtra2 <= 0
+        ? `<strong>${addCount2}点</strong>追加・価格問わず何でもOK（${newQty2}個・${Math.floor(newQty2/3)}セット）`
+        : `<strong>${addCount2}点</strong>追加・1点あたり税抜<strong>約${perItem2.toLocaleString()}円以上</strong>（${newQty2}個・${Math.floor(newQty2/3)}セット）`;
 
       adviceHtml = `
         <div class="advice-box">
-          <div class="adv-ttl">💡 あと${addCount}点追加すれば1,000円でくじが引けます！</div>
-          <div style="margin-bottom:6px;font-size:12px;">
-            現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）＋ 追加${addCount}点 → ${newQty}点（割引 ${tinc(newDisc).toLocaleString()}円税込）
-          </div>
-          ${itemLines}
+          <div class="adv-ttl">💡 追加購入でくじ・セット割引をゲット！</div>
+          <div style="margin-bottom:6px;font-size:12px;">現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）</div>
+          <div class="adv-item"><span class="adv-badge">案①</span><span>${p1}</span></div>
+          <div class="adv-item"><span class="adv-badge">案②</span><span>${p2}</span></div>
         </div>`;
     } else {
       const currentDisc  = Math.floor(leftTotalQty / 3) * 200;
       const currentAfter = leftTotalPrice - currentDisc;
       const shortage     = 1000 - currentAfter;
       if (shortage > 0) {
+        // 案①: +3点
+        const need3 = Math.max(0, 1000 - leftTotalPrice + Math.floor((leftTotalQty + 3) / 3) * 200);
+        const per3  = Math.ceil(need3 / 3);
+        // 案②: +6点（さらに安い商品でOK）
+        const need6 = Math.max(0, 1000 - leftTotalPrice + Math.floor((leftTotalQty + 6) / 3) * 200);
+        const per6  = Math.ceil(need6 / 6);
+
         adviceHtml = `
           <div class="advice-box">
-            <div class="adv-ttl">💡 あと税抜${shortage.toLocaleString()}円分（3点単位で）追加するとくじが引けます！</div>
-            <div class="adv-item"><span class="adv-badge">ヒント</span><span>3点追加なら1点あたり <strong>税抜約${Math.ceil(shortage / 3).toLocaleString()}円以上</strong>を3点</span></div>
+            <div class="adv-ttl">💡 追加購入でくじ・セット割引をゲット！</div>
+            <div style="margin-bottom:6px;font-size:12px;">現在の残り ${leftTotalQty}点（税抜${leftTotalPrice.toLocaleString()}円）</div>
+            <div class="adv-item"><span class="adv-badge">案①</span><span><strong>3点</strong>追加・1点あたり税抜<strong>約${per3.toLocaleString()}円以上</strong>（${leftTotalQty+3}個・${Math.floor((leftTotalQty+3)/3)}セット）</span></div>
+            <div class="adv-item"><span class="adv-badge">案②</span><span><strong>6点</strong>追加・1点あたり税抜<strong>約${per6.toLocaleString()}円以上</strong>（${leftTotalQty+6}個・${Math.floor((leftTotalQty+6)/3)}セット）</span></div>
           </div>`;
       }
     }
