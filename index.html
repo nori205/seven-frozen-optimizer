@@ -343,7 +343,7 @@ function solveOne(remaining) {
 
   function rec(i, cnt, price) {
     if (i === n) {
-      if (cnt < 3) return;   // 割引に必要な最低3点未満はスキップ
+      if (!cnt || cnt % 3 !== 0) return;
       const disc  = Math.floor(cnt / 3) * 200;   // 税抜割引額
       const after = price - disc;                  // 税抜割引後合計
       if (after < 1000) return;
