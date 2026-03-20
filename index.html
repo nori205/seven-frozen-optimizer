@@ -97,13 +97,21 @@
     .pc-f input[type="number"]:focus { outline: none; border-color: var(--red); background: #fff; }
 
     .btn-add {
-      width: 100%; display: flex; align-items: center; justify-content: center; gap: 7px;
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
       background: var(--card); color: var(--green);
       border: 2px dashed var(--green); border-radius: 10px;
       padding: 13px; font-size: 15px; font-weight: bold;
-      cursor: pointer; margin-bottom: 14px;
+      cursor: pointer;
     }
     .btn-add:active { background: #e8f8f5; }
+    .btn-row { display: flex; gap: 10px; margin-bottom: 14px; }
+    .btn-clear {
+      background: #fff0f0; color: var(--red);
+      border: 2px solid var(--red); border-radius: 10px;
+      padding: 13px 16px; font-size: 14px; font-weight: bold;
+      cursor: pointer; white-space: nowrap;
+    }
+    .btn-clear:active { background: #fde8e8; }
     .btn-calc {
       width: 100%;
       background: linear-gradient(135deg, var(--red-dk), var(--red));
@@ -266,7 +274,10 @@
 <div class="sec">
   <div class="sec-ttl">買いたい商品リスト</div>
   <div id="plist"></div>
-  <button class="btn-add" onclick="addProd()">＋ 商品を追加</button>
+  <div class="btn-row">
+    <button class="btn-add" onclick="addProd()">＋ 商品を追加</button>
+    <button class="btn-clear" onclick="clearAll()">🗑 一括削除</button>
+  </div>
 </div>
 
 <div class="sec" style="margin-top:0">
@@ -295,6 +306,13 @@ function addProd() {
 function delProd(id) {
   prods = prods.filter(p => p.id !== id);
   renderList();
+}
+function clearAll() {
+  if (!prods.length) return;
+  prods = [];
+  nextId = 0;
+  renderList();
+  $('result').innerHTML = '';
 }
 function setF(id, f, v) {
   const p = prods.find(p => p.id === id);
@@ -417,7 +435,51 @@ function showResult(trips, leftover, items, warn) {
   const res = $('result');
 
   if (!trips.length) {
-    res.innerHTML = `<div class="err">1,000円以上の会計が組めませんでした。<br>欲しい数を増やすか価格をご確認ください。</div>`;
+    const totalQty   = items.reduce((s, p) => s + p.stock, 0);
+    const totalPrice = items.reduce((s, p) => s + p.price * p.stock, 0);
+    const totalDisc  = Math.floor(totalQty / 3) * 200;
+    const afterDisc  = totalPrice - totalDisc;
+    const shortage   = Math.max(0, 1000 - afterDisc);
+
+    const shortageMsg = shortage > 0
+      ? `現在の割引後合計: 税抜 <strong>${afterDisc.toLocaleString()}円</strong>／ あと税抜 <strong>¥${shortage.toLocaleString()}</strong> 買えばくじ条件達成！`
+      : `現在の割引後合計: 税抜 <strong>${afterDisc.toLocaleString()}円</strong>（3の倍数になる組み合わせがないため達成できていません）`;
+
+    // 各商品を3つ追加した場合の試算
+    const sugs = items.map(p => {
+      const nQty   = totalQty + 3;
+      const nPrice = totalPrice + p.price * 3;
+      const nDisc  = Math.floor(nQty / 3) * 200;
+      const nAfter = nPrice - nDisc;
+      return { name: p.name, price: p.price, nAfter, ok: nAfter >= 1000 };
+    }).sort((a, b) => (b.ok - a.ok) || (a.nAfter - b.nAfter));
+
+    const okSugs   = sugs.filter(s => s.ok);
+    const failSugs = sugs.filter(s => !s.ok).slice(0, 3);
+
+    let sugHtml = `<div class="advice-box" style="margin-top:10px;">
+      <div class="adv-ttl">💡 入力済み商品を3つ追加するなら？</div>`;
+    if (okSugs.length) {
+      sugHtml += okSugs.map(s => `
+        <div class="adv-item">
+          <span class="adv-badge" style="background:var(--green);">OK</span>
+          <span><strong>${esc(s.name)}</strong> を3つ追加 → 税抜計 <strong>${s.nAfter.toLocaleString()}円</strong>でくじ条件達成！（追加代 税抜${(s.price * 3).toLocaleString()}円）</span>
+        </div>`).join('');
+    }
+    if (failSugs.length) {
+      sugHtml += failSugs.map(s => `
+        <div class="adv-item">
+          <span class="adv-badge">+3</span>
+          <span><strong>${esc(s.name)}</strong> を3つ追加 → 税抜計 ${s.nAfter.toLocaleString()}円（あと税抜¥${(1000 - s.nAfter).toLocaleString()}不足）</span>
+        </div>`).join('');
+    }
+    sugHtml += `</div>`;
+
+    res.innerHTML = `<div class="err">
+      <strong>1,000円以上の会計が組めませんでした。</strong><br>
+      ${shortageMsg}<br>
+      欲しい数を増やすか価格をご確認ください。
+    </div>${sugHtml}`;
     return;
   }
 
